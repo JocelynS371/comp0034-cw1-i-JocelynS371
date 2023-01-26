@@ -3,3 +3,5 @@ openpyxl
 dash
 dash-bootstrap-components
 pytest
+pathlib
+xlrd
