@@ -19,8 +19,15 @@ Add any instructions here for the markers on how to setup and run your Dash app.
 Add the URL to your GitHub repo here e.g. https://github.com/ucl-comp0035name_of_your_repo
 
 # Visualisation design
+## **State** the target audience1 and the question(s)2 that the visualisation(s) is/are intended to address.
 
-Add evidence here.
+## **Explain** the design for the dashboard and each visualisation. The designs should be appropriate for the target audience and the question(s) the visualisation is designed to address. Give reasons for your choices. Use appropriate literature/references to support your decisions.
+### definition
+*‘Explain’ questions expect you to basically clarify a topic. When answering such questions, it helps to imagine you are writing for someone who knows absolutely nothing of the subject. And remember two things. To provide as much detail as possible, and to give definitions for any jargon or key terms when used.* 
+*In addition, always remember to back any claims with academic research. In explanatory answers it is important that you demonstrate a clear understanding of a research topic or argument. This comes across most convincingly if you present a clear interpretation of the subject or argument to the reader. Keep in mind any ‘what’, ‘how’ and ‘why’ questions as this will help you to structure a clear and logically coherent response. Coherence is extremely important in providing explanatory answers.* 
+
+## **Evaluate** the final dashboard and visualisations with respect to the design and intended audience and purpose.
+*When answering this essay question word, the key is to provide your opinion or verdict concerning the extent to which an argument or set of research findings is accurate. You may also be required to demonstrate the extent to which you agree with a particular argument or hypothesis.*
 
 # Dash app
 
