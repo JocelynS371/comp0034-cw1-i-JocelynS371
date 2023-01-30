@@ -48,28 +48,41 @@ In the section above, we can see that need 1 and 5 are directly satified with a 
 
 Need 1 can be satified by design charts based on the questions proposed. Upon a closer inspection, we can see that each question, other than question 4 can correspond to 1 or more than 1 chart.
 
-### First Chart
+### Chart 1 and Chart 2
 >How much have the temperture of the current changed in the past 15 years? Is the termperture change increaseing due to global warming?   
 
-This question can be answered using a chart of temperture against time. Because the trend is our main concern in this question, a line chart or scatter graph would be appopiate.    
+This question can be answered using a chart of temperture against time.
 It should also be noted that the data in the dataset came from different locations, it would be useful to the users if they can select a location and see only the data from that location. 
 
-### Second Chart
 >Is the annual salinity consistent in the past 15 year? Does the pattern of change coincide with the temperture change
 
-This is very similar to the first chart, but instead of temperture, salinity should be plotted. For the same reason, this should be a line or scatter graph. Keeping in mind that a ML algorithm might be added at a later stage, a scatter graph might be more appopiate as a regression line can be fitted a bit more easily.   
+This is very similar to the first chart, but instead of temperture, salinity should be plotted.Keeping 
 Again, the users should have the ability to plot only the data from certain locations.
 
-### Third Chart (Should Have)
+Both of these graphs are concerned with the trend of the data in regard to time. On IBM's Design Language website, Line, Area, Boxplot, Histogram and Stream are recommended for showing trends. The first 4 chart are all avaiable in plotly express. In my opinion, a line chart would be the best choice since it is clear and often have the lowest ink to data ratio. 
+However, our target audience is expected to have experince in reading charts, it is possible that they will prefer chart like boxplot that provide extra information, therefore, there should be an option for the user to choose between line and boxplot. If there is enough time, hostograms can be added as an option as well.
+
+### Chart 3 and Chart 4 (Should Have)
 >Is the annual salinity consistent in the past 15 year? Does the pattern of change coincide with the temperture change
-From the second part of this question, it arised that the temperture could be plotted against the salinity to show their relation. Since relation is what we are interested in, a line chart would be suitable
+From the second part of this question, it arised that the temperture could be plotted against the salinity to show their relation. Since correlation is what we are interested in, IBM recommend a scatter plot, heatmap ot parallel coordinate. Scatter plot would be very easier to create and might intergrate well with a ML algorithm if we are to create one at later stage. 
+Heatmaps on the other hand wouldn't be a suitable graph for this correlation. It would be much more suitable for datas that involve frequency or density.
+
+>How much have the temperture of the current changed in the past 15 years? Is the termperture change increaseing due to global warming? 
+
+In the process of designing, it occured to me that it might be useful to the users if a comparision between locations are shown. This comparision could be shown as a grouped bar chart where bars from different locations are grouped together.
+If there is sufficient time, a bubble graph on a map might also be useful to visualise the comparision.
+There should be be an option for this graph to choose locations to compare, an option for temperture or salinity and an option for year to compare.
 ### Could Have Charts
 >Did the ocean current change direction? If yes, how?
 
 This is a much more difficult question to answer than the other 2 question we are considering, therefore it is counted as a could have feature rather than a must have feature. When I was proposing the question, I had envision a ML algorithm to have been design at this stage, therefore it may not be feasible at this stage to plot. 
 
 ## Overall Design of the dashboard
- 
+### Designing the visuals
+One priciple to keep in mind of while designing the dashboard is the Gestalt Principles. It is the idea that humn group silimilar element and recognize patterns when we precievive objects.
+As an interface between users and the data, it is important that we help user navagate as effortlessly as possible.
+On the whole, we could apply the law of common region on the dash board design. Which means we should group similar elements in a common, closed region. For example, we could present data sniplet eg. means and standard deivations on the side and the graphs on the other side. This allows the user to understand that they are different element on their first glance.   
+The law of Multi-Stability means that we could highlight the important information with contrast in colour. We want to present the information as the 'foreground', which often means the lightest colour in the page. 
 ## **Evaluate** the final dashboard and visualisations with respect to the design and intended audience and purpose.
 *When answering this essay question word, the key is to provide your opinion or verdict concerning the extent to which an argument or set of research findings is accurate. You may also be required to demonstrate the extent to which you agree with a particular argument or hypothesis.*
 
