@@ -1,4 +1,4 @@
-from dash import Dash,html,dcc
+from dash import Dash,html,dcc, Input, Output
 from xlrd import xldate_as_datetime as date_convert
 import plotly.express as px
 import dash_bootstrap_components as dbc
@@ -30,19 +30,30 @@ def seperate_location(df):
     return df
 df=read_df()
 
-line_temp=px.scatter(
+line_temp=px.line(
     df,
     x='Date',
     y='Temperture',
     template='simple_white')
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.layout=dbc.Container(    children=[
+app.layout=dbc.Container(children=[
         html.H1(children='Data Dashboard', className="display-1"),
-        html.H2(children='graph of temperture change with time'),
-        dcc.Graph(
-            id='temp_line',
-            figure=line_temp)
+        dbc.Row([
+            dbc.Col(width=3, children=[
+                html.H4('select location'),
+                dcc.Dropdown(
+                    id='location-select',
+                    options=['A','B'],
+                    value='A'
+                )]),
+            dbc.Col(width=9, children=[
+                html.H2(children='graph of temperture change with time'),
+                dcc.Graph(
+                id='temp_line',
+                figure=line_temp)]),
+        ])
+            
     ]
 )
 
