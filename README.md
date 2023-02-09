@@ -82,7 +82,7 @@ This is a much more difficult question to answer than the other 2 question we ar
 One priciple to keep in mind of while designing the dashboard is the Gestalt Principles. It is the idea that humn group silimilar element and recognize patterns when we precievive objects.
 As an interface between users and the data, it is important that we help user navagate as effortlessly as possible.
 On the whole, we could apply the law of common region on the dash board design. Which means we should group similar elements in a common, closed region. For example, we could present data sniplet eg. means and standard deivations on the side and the graphs on the other side. This allows the user to understand that they are different element on their first glance.   
-The law of Multi-Stability means that we could highlight the important information with contrast in colour. We want to present the information as the 'foreground', which often means the lightest colour in the page. 
+The law of Multi-Stability means that we could highlight the important information with contrast in colour. We want to present the information as the 'foreground', which often means the lightest colour in the page.    
 ## **Evaluate** the final dashboard and visualisations with respect to the design and intended audience and purpose.
 *When answering this essay question word, the key is to provide your opinion or verdict concerning the extent to which an argument or set of research findings is accurate. You may also be required to demonstrate the extent to which you agree with a particular argument or hypothesis.*
 
