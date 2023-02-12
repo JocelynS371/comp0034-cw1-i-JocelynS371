@@ -23,9 +23,24 @@ def read_df():
     'Serial_date_number_base_date_1_January_0000':'Date',
     'Bottom_Depth_m':'Bottom Depth'
     },inplace=True)
-    df['Latitude'] = round(df['Latitude'], 2)
-    df['Longitude'] = round(df['Longitude'], 2)
     return df
+
+def seperate_location(df):
+    df['Latitude'] = round(df['Latitude'], 1)
+    df['Longitude'] = round(df['Longitude'], 1)
+    grouped = df.groupby(['Longitude', 'Latitude'])
+    return grouped
+
+def map_plot(df):
+    #map plot to show locations
+    fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
+                            color='Temperture', size='Temperture',
+                            color_continuous_scale='Viridis',
+                            size_max=15, zoom=6,
+                            title='Mean Temperture in 6 locations')
+    fig.update_layout(mapbox_style='open-street-map')
+    return fig
+
 def temp_plot(df):
     figures = {}
     for i, (name, group) in enumerate(grouped):
@@ -40,9 +55,13 @@ def temp_plot(df):
     return figures
 
 df=read_df()
-grouped = df.groupby(['Longitude', 'Latitude'])
+grouped=seperate_location(df)
+
+fig=map_plot(df)
+fig.show()
+
 temp_plot_fig=temp_plot(df)
-print(len(temp_plot_fig))
+
 line_temp=px.line(
     df,
     x='Date',
@@ -50,7 +69,9 @@ line_temp=px.line(
     template='simple_white')
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.layout=dbc.Container(children=[
+app.layout=dbc.Container(
+    children=[
+        html.div()
         html.H1(children='Data Dashboard', className="display-1"),
         dbc.Row([
             dbc.Col(width=3, children=[

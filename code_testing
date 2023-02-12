@@ -1,30 +1,26 @@
-import pandas as pd
-import plotly.express as px
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
 
-# Create a sample data frame
-df = pd.DataFrame({'longitude': [1, 2, 2, 3, 3, 3], 'latitude': [4, 5, 5, 6, 6, 7], 'value1': [10, 20, 20, 30, 30, 40], 'value2': [100, 200, 200, 300, 300, 400]})
+app = dash.Dash()
 
-# Group the data based on the values in 'longitude' and 'latitude' columns
-grouped = df.groupby(['longitude', 'latitude'])
+app.layout = html.Div([
+    dcc.Tabs(id="tabs", value='tab-1', children=[
+        dcc.Tab(label='Tab 1', value='tab-1', children=[
+            html.Div(children='This is the content of Tab 1')
+        ]),
+        dcc.Tab(label='Tab 2', value='tab-2', children=[
+            html.Div(children='This is the content of Tab 2')
+        ]),
+        dcc.Tab(label='Tab 3', value='tab-3', children=[
+            html.Div(children='This is the content of Tab 3')
+        ]),
+    ])
+])
 
-# Create a dictionary to store the figures
-figures = {}
+if __name__ == '__main__':
+    app.run_server(debug=True)
 
-# Iterate through the groups
-for i, (name, group) in enumerate(grouped):
-    # Create a Plotly scatter plot for each group
-    fig = px.scatter(group, x='value1', y='value2')
-
-    # Set a custom title for each plot
-    title = f"Longitude: {name[0]} Latitude: {name[1]}"
-    fig.update_layout(title=title)
-
-    # Add the figure to the dictionary
-    figures[f"fig_{i + 1}"] = fig
-
-# Show the figures
-for fig in figures.values():
-    fig.show()
 
 
 
