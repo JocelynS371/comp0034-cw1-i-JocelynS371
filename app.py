@@ -41,6 +41,27 @@ def map_plot(df):
     fig.update_layout(mapbox_style='open-street-map')
     return fig
 
+def map_tab(fig,df):
+    tab=dbc.Container(
+        children=[
+            html.Div(),
+            html.H1(children='Data Dashboard', className="display-1"),
+            dbc.Row([
+                dbc.Col(width=3, children=[
+                    html.H4('Select'),
+                    dcc.Dropdown(
+                        id='figure-dropdown',
+                        options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
+                        for i in range(len(temp_plot_fig))],
+                        value='fig_1'
+                    )]),
+                dbc.Col(width=9, children=[
+                    html.H2(children='Graph of temperture change with time'),
+                    dcc.Graph(
+                    id='temp_line',
+                    figure=temp_plot_fig['fig_1'])])])])
+    return tab
+
 def temp_plot(df):
     figures = {}
     for i, (name, group) in enumerate(grouped):
@@ -53,6 +74,27 @@ def temp_plot(df):
         fig.update_layout(title=title)
         figures[f"fig_{i + 1}"] = fig
     return figures
+
+def temp_tab(df,temp_plot_fig):
+    tab=dbc.Container(
+        children=[
+            html.Div(),
+            html.H1(children='Data Dashboard', className="display-1"),
+            dbc.Row([
+                dbc.Col(width=3, children=[
+                    html.H4('select location'),
+                    dcc.Dropdown(
+                        id='figure-dropdown',
+                        options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
+                        for i in range(len(temp_plot_fig))],
+                        value='fig_1'
+                    )]),
+                dbc.Col(width=9, children=[
+                    html.H2(children='Graph of temperture change with time'),
+                    dcc.Graph(
+                    id='temp_line',
+                    figure=temp_plot_fig['fig_1'])])])])
+    return tab
 
 df=read_df()
 grouped=seperate_location(df)
@@ -77,24 +119,7 @@ def content(tab):
         )
     elif tab=='temp-scatter':
         temp_plot_fig=temp_plot(df)
-        return dbc.Container(
-        children=[
-            html.Div(),
-            html.H1(children='Data Dashboard', className="display-1"),
-            dbc.Row([
-                dbc.Col(width=3, children=[
-                    html.H4('select location'),
-                    dcc.Dropdown(
-                        id='figure-dropdown',
-                        options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
-                        for i in range(len(temp_plot_fig))],
-                        value='fig_1'
-                    )]),
-                dbc.Col(width=9, children=[
-                    html.H2(children='Graph of temperture change with time'),
-                    dcc.Graph(
-                    id='temp_line',
-                    figure=temp_plot_fig['fig_1'])])])])
+        return temp_tab(temp_plot_fig)
 
 @app.callback(
     Output(component_id='temp_line', component_property='figure'),
