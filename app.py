@@ -57,6 +57,8 @@ def temp_plot(df):
 df=read_df()
 grouped=seperate_location(df)
 
+#define different tabs
+tab_map_temp=
 fig=map_plot(df)
 fig.show()
 
