@@ -1,0 +1,31 @@
+import pandas as pd
+import plotly.express as px
+
+# Create a sample data frame
+df = pd.DataFrame({'longitude': [1, 2, 2, 3, 3, 3], 'latitude': [4, 5, 5, 6, 6, 7], 'value1': [10, 20, 20, 30, 30, 40], 'value2': [100, 200, 200, 300, 300, 400]})
+
+# Group the data based on the values in 'longitude' and 'latitude' columns
+grouped = df.groupby(['longitude', 'latitude'])
+
+# Create a dictionary to store the figures
+figures = {}
+
+# Iterate through the groups
+for i, (name, group) in enumerate(grouped):
+    # Create a Plotly scatter plot for each group
+    fig = px.scatter(group, x='value1', y='value2')
+
+    # Set a custom title for each plot
+    title = f"Longitude: {name[0]} Latitude: {name[1]}"
+    fig.update_layout(title=title)
+
+    # Add the figure to the dictionary
+    figures[f"fig_{i + 1}"] = fig
+
+# Show the figures
+for fig in figures.values():
+    fig.show()
+
+
+
+
