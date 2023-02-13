@@ -1,5 +1,5 @@
 from dash import Dash,html,dcc, Input, Output
-from xlrd import xldate_as_datetime as date_convert
+from datetime import datetime
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from pathlib import Path
@@ -23,6 +23,7 @@ def read_df():
     'Serial_date_number_base_date_1_January_0000':'Date',
     'Bottom_Depth_m':'Bottom Depth'
     },inplace=True)
+    df['Date'] = [datetime.fromordinal(int(date)) for date in df['Date']] 
     return df
 
 def seperate_location(df):
@@ -60,69 +61,107 @@ def map_tab():
                     figure=map_plot(df,'Temperture'))])])])
     return tab
 
-def temp_plot(df):
+def time_plot(df, option):
     figures = {}
+    grouped = df.groupby(['Longitude', 'Latitude'])
     for i, (name, group) in enumerate(grouped):
         fig = px.scatter(
             group,
             x='Date',
-            y='Temperture',
+            y=option,
             template='simple_white')
         title = f"Longitude: {name[0]} Latitude: {name[1]}"
         fig.update_layout(title=title)
         figures[f"fig_{i + 1}"] = fig
     return figures
 
-def temp_tab(temp_plot_fig):
-    tab=dbc.Container(
+
+def time_tab(time_plot_fig):
+    tab = dbc.Container(
         children=[
             html.Div(),
             html.H1(children='Data Dashboard', className="display-1"),
             dbc.Row([
                 dbc.Col(width=3, children=[
+                    html.H4('Select Variable to show'),
+                    dcc.RadioItems(
+                        id='radio-option',
+                        options=[
+                            {'label': 'Temperture', 'value': 'Temperture'},
+                            {'label': 'Salinity', 'value': 'Salinity'}
+                        ],
+                        value='Temperture'
+                    ),
                     html.H4('select location'),
                     dcc.Dropdown(
-                        id='figure-dropdown',
+                        id='dropdown-location',
                         options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
-                        for i in range(len(temp_plot_fig))],
+                        for i in range(len(time_plot_fig))],
                         value='fig_1'
                     )]),
+
                 dbc.Col(width=9, children=[
-                    html.H2(children='Graph of temperture change with time'),
+                    html.H2(children='Graph of Temp/Salinity change with time'),
                     dcc.Graph(
-                    id='temp_line',
-                    figure=temp_plot(df)['fig_1'])])])])
+                    id='time_scatter',
+                    figure=time_plot_fig['fig_1'])
+                ])
+                    
+                ])
+            ])
+
     return tab
+
+def comparison_plot():
+
+    return
+
+def comparison_tab():
+
+    return
+
 
 df=read_df()
 grouped=seperate_location(df)
 
 
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(external_stylesheets=[dbc.themes.DARKLY])
+
 
 app.layout = html.Div([
     html.H1('Dashboard'),
     dcc.Tabs(id="tabs-graph", value='location-map', children=[
-        dcc.Tab(label='location', value='location-map'),
-        dcc.Tab(label='temp-time', value='temp-scatter'),
+        dcc.Tab(label='Map Plot', value='location-map'),
+        dcc.Tab(label='Time Trend', value='time-scatter'),
+        dcc.Tab(label='Comparision of Data', value='comparison')
     ]),
     html.Div(id='tabs-content')
 ])
+
+
 @app.callback(Output('tabs-content','children'),Input('tabs-graph','value'))
 def content(tab):
     if tab=='location-map':
         return map_tab()
-    elif tab=='temp-scatter':
-        temp_plot_fig=temp_plot(df)
-        return temp_tab(temp_plot_fig)
-#Call back for temp
+    elif tab=='time-scatter':
+        time_plot_fig=time_plot(df,'Temperture')
+        return time_tab(time_plot_fig)
+    elif tab=='comparison':
+        return comparison_tab()
+
+
+
+# Callback for time
 @app.callback(
-    Output(component_id='temp_line', component_property='figure'),
-    [Input(component_id='figure-dropdown', component_property='value')]
+    Output(component_id='time_scatter', component_property='figure'),
+    Input(component_id='dropdown-location', component_property='value'),
+    Input(component_id='radio-option', component_property='value')
 )
-def update_figure(selected_value):
-    figures = temp_plot(df)
-    return figures[selected_value]
+def update_figure(location_value, radio_option):
+    figures = time_plot(df, radio_option)
+    return figures[location_value]
+
+
 # Callback for map
 @app.callback(
     Output(component_id='map', component_property='figure'),
