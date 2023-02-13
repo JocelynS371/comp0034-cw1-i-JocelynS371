@@ -51,7 +51,8 @@ def map_tab():
                     html.H4('Select'),
                     dcc.Dropdown(
                         id='select',
-                        options=['Temperture','Salinity'],
+                        options=[{'label':f'{option}','value':f'{option}'}
+                        for option in df.columns],
                         value='Temperture'
                     )]),
                 dbc.Col(width=9, children=[
@@ -61,47 +62,59 @@ def map_tab():
                     figure=map_plot(df,'Temperture'))])])])
     return tab
 
-def time_plot(df, option):
+def time_plot(df, option,trend):
     figures = {}
     grouped = df.groupby(['Longitude', 'Latitude'])
     for i, (name, group) in enumerate(grouped):
-        fig = px.scatter(
-            group,
-            x='Date',
-            y=option,
-            template='simple_white')
-        title = f"Longitude: {name[0]} Latitude: {name[1]}"
+        if trend in trend_option:
+            fig = px.scatter(
+                group,
+                x='Date',
+                y=option,
+                template='simple_white',
+                trendline=trend)
+        else:
+            fig = px.scatter(
+                group,
+                x='Date',
+                y=option,
+                template='simple_white')
+        title = f"{option} varying with time where Longitude= {name[0]} Latitude= {name[1]}"
         fig.update_layout(title=title)
         figures[f"fig_{i + 1}"] = fig
     return figures
-
 
 def time_tab(time_plot_fig):
     tab = dbc.Container(
         children=[
             html.Div(),
-            html.H1(children='Data Dashboard', className="display-1"),
-            dbc.Row([
-                dbc.Col(width=3, children=[
-                    html.H4('Select Variable to show'),
+            html.H2(children='Time Series Data', className="display-1"),
+            html.H4('Select Variable to show',style={'textAlign': 'center'}),
                     dcc.RadioItems(
                         id='radio-option',
-                        options=[
-                            {'label': 'Temperture', 'value': 'Temperture'},
-                            {'label': 'Salinity', 'value': 'Salinity'}
-                        ],
-                        value='Temperture'
+                        options=[{'label': f'{option}', 'value': f'{option}'} 
+                        for option in df.columns],
+                        value='Temperture',
+                        style={'textAlign': 'center'}
                     ),
-                    html.H4('select location'),
+            dbc.Row([
+                dbc.Col(width=3, children=[
+                    html.H5('Select location'),
                     dcc.Dropdown(
                         id='dropdown-location',
                         options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
                         for i in range(len(time_plot_fig))],
-                        value='fig_1'
-                    )]),
+                        value='fig_1'),
+                    html.H5(children='type type of trendline you want here'),
+                    html.H6(children=f'options are{trend_option}'),
+                    dcc.Dropdown(
+                                id='dropdown-trend',
+                                options=[{'label': f'{option}', 'value': f'{option}'} 
+                                            for option in trend_option],
+                                value='lowess')
+                    ]),
 
                 dbc.Col(width=9, children=[
-                    html.H2(children='Graph of Temp/Salinity change with time'),
                     dcc.Graph(
                     id='time_scatter',
                     figure=time_plot_fig['fig_1'])
@@ -112,41 +125,48 @@ def time_tab(time_plot_fig):
 
     return tab
 
-def comparison_plot():
-
-    return
-
 def comparison_tab():
-
-    return
+    tab = dbc.Container(
+        html.Div(),
+        html.H1(children='Placeholder', className="display-1"),
+        dbc.Row([
+            dbc.Col(width=6, children=[
+                html.H4('Column 1')
+            ]),
+            dbc.Col(width=6, children=[
+                html.H4('Column 2')
+            ])
+        ])
+    )
+    return tab
 
 
 df=read_df()
 grouped=seperate_location(df)
+trend_option=['ols', 'lowess', 'expanding']
 
-
-app = Dash(external_stylesheets=[dbc.themes.DARKLY])
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 app.layout = html.Div([
     html.H1('Dashboard'),
-    dcc.Tabs(id="tabs-graph", value='location-map', children=[
+    dcc.Tabs(id="tabs-graph", value='location-map',
+     children=[
         dcc.Tab(label='Map Plot', value='location-map'),
         dcc.Tab(label='Time Trend', value='time-scatter'),
-        dcc.Tab(label='Comparision of Data', value='comparison')
     ]),
     html.Div(id='tabs-content')
 ])
 
-
+#callback for tabs
 @app.callback(Output('tabs-content','children'),Input('tabs-graph','value'))
 def content(tab):
     if tab=='location-map':
         return map_tab()
     elif tab=='time-scatter':
-        time_plot_fig=time_plot(df,'Temperture')
+        time_plot_fig=time_plot(df,'Temperture','none')
         return time_tab(time_plot_fig)
-    elif tab=='comparison':
+    elif tab=='data_comparision':
         return comparison_tab()
 
 
@@ -155,10 +175,11 @@ def content(tab):
 @app.callback(
     Output(component_id='time_scatter', component_property='figure'),
     Input(component_id='dropdown-location', component_property='value'),
-    Input(component_id='radio-option', component_property='value')
+    Input(component_id='radio-option', component_property='value'),
+    Input(component_id='dropdown-trend', component_property='value')
 )
-def update_figure(location_value, radio_option):
-    figures = time_plot(df, radio_option)
+def update_figure(location_value, radio_option,trend):
+    figures = time_plot(df, radio_option,trend)
     return figures[location_value]
 
 
@@ -169,5 +190,8 @@ def update_figure(location_value, radio_option):
 )
 def update_figure(option):
     return map_plot(df, option)
+
+
+
 if __name__=='__main__':
     app.run_server(debug=True)

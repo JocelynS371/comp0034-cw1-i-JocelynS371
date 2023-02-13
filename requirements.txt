@@ -4,4 +4,5 @@ dash
 dash-bootstrap-components
 pytest
 pathlib
-xlrd
+datetime
+statsmodels
