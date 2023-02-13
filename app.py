@@ -31,7 +31,7 @@ def seperate_location(df):
     grouped = df.groupby(['Longitude', 'Latitude'])
     return grouped
 
-def map_plot(df):
+def map_plot(df,option):
     #map plot to show locations
     fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
                             color='Temperture', size='Temperture',
@@ -41,25 +41,24 @@ def map_plot(df):
     fig.update_layout(mapbox_style='open-street-map')
     return fig
 
-def map_tab(fig,df):
+def map_tab():
     tab=dbc.Container(
         children=[
             html.Div(),
-            html.H1(children='Data Dashboard', className="display-1"),
+            html.H1(children='Locations', className="display-1"),
             dbc.Row([
                 dbc.Col(width=3, children=[
                     html.H4('Select'),
                     dcc.Dropdown(
-                        id='figure-dropdown',
-                        options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
-                        for i in range(len(temp_plot_fig))],
-                        value='fig_1'
+                        id='select',
+                        options=['Temperture'],
+                        value='Temperture'
                     )]),
                 dbc.Col(width=9, children=[
-                    html.H2(children='Graph of temperture change with time'),
+                    html.H2(children='Map Location'),
                     dcc.Graph(
-                    id='temp_line',
-                    figure=temp_plot_fig['fig_1'])])])])
+                    id='map',
+                    figure=map_plot(df,'Temperture'))])])])
     return tab
 
 def temp_plot(df):
@@ -75,7 +74,7 @@ def temp_plot(df):
         figures[f"fig_{i + 1}"] = fig
     return figures
 
-def temp_tab(df,temp_plot_fig):
+def temp_tab(temp_plot_fig):
     tab=dbc.Container(
         children=[
             html.Div(),
@@ -93,7 +92,7 @@ def temp_tab(df,temp_plot_fig):
                     html.H2(children='Graph of temperture change with time'),
                     dcc.Graph(
                     id='temp_line',
-                    figure=temp_plot_fig['fig_1'])])])])
+                    figure=temp_plot(df)['fig_1'])])])])
     return tab
 
 df=read_df()
@@ -113,10 +112,7 @@ app.layout = html.Div([
 @app.callback(Output('tabs-content','children'),Input('tabs-graph','value'))
 def content(tab):
     if tab=='location-map':
-        fig=map_plot(df)
-        return html.Div(
-            dcc.Graph(figure=fig)
-        )
+        return map_tab()
     elif tab=='temp-scatter':
         temp_plot_fig=temp_plot(df)
         return temp_tab(temp_plot_fig)

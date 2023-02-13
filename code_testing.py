@@ -31,15 +31,34 @@ def seperate_location(df):
     grouped = df.groupby(['Longitude', 'Latitude'])
     return grouped
 
-def map_plot(df):
+def map_plot(df,option):
     #map plot to show locations
     fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
-                            color='Temperture', size='Temperture',
-                            color_continuous_scale='Viridis',
-                            size_max=15, zoom=6,
-                            title='Mean Temperture in 6 locations')
-    fig.update_layout(mapbox_style='open-street-map')
+                                color=f'{option}', size=f'{option}',
+                                color_continuous_scale='Viridis',
+                                size_max=15, zoom=6,
+                                title=f'Mean {option} in 6 locations')
     return fig
+
+def map_tab():
+    tab=dbc.Container(
+        children=[
+            html.Div(),
+            html.H1(children='Locations', className="display-1"),
+            dbc.Row([
+                dbc.Col(width=3, children=[
+                    html.H4('Select'),
+                    dcc.Dropdown(
+                        id='select',
+                        options=['Temperture'],
+                        value='Temperture'
+                    )]),
+                dbc.Col(width=9, children=[
+                    html.H2(children='Map Location'),
+                    dcc.Graph(
+                    id='map',
+                    figure=map_plot(df, 'Temperture'))])])])
+    return tab
 
 def temp_plot(df):
     figures = {}
@@ -54,30 +73,8 @@ def temp_plot(df):
         figures[f"fig_{i + 1}"] = fig
     return figures
 
-df=read_df()
-grouped=seperate_location(df)
-
-
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-app.layout = html.Div([
-    html.H1('Dashboard'),
-    dcc.Tabs(id="tabs-graph", value='location-map', children=[
-        dcc.Tab(label='location', value='location-map'),
-        dcc.Tab(label='temp-time', value='temp-scatter'),
-    ]),
-    html.Div(id='tabs-content')
-])
-@app.callback(Output('tabs-content','children'),Input('tabs-graph','value'))
-def content(tab):
-    if tab=='location-map':
-        fig=map_plot(df)
-        return html.Div(
-            dcc.Graph(figure=fig)
-        )
-    elif tab=='temp-scatter':
-        temp_plot_fig=temp_plot(df)
-        return dbc.Container(
+def temp_tab(temp_plot_fig):
+    tab=dbc.Container(
         children=[
             html.Div(),
             html.H1(children='Data Dashboard', className="display-1"),
@@ -95,10 +92,42 @@ def content(tab):
                     dcc.Graph(
                     id='temp_line',
                     figure=temp_plot_fig['fig_1'])])])])
+    return tab
+
+df=read_df()
+column=df.columns
+grouped=seperate_location(df)
+
+
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+app.layout = html.Div([
+    html.H1('Dashboard'),
+    dcc.Tabs(id="tabs-graph", value='location-map', children=[
+        dcc.Tab(label='location', value='location-map'),
+        dcc.Tab(label='temp-time', value='temp-scatter'),
+    ]),
+    html.Div(id='tabs-content')
+])
+@app.callback(Output('tabs-content','children'),Input('tabs-graph','value')) #Call back for tabs
+def content(tab):
+    if tab=='location-map':
+        fig=map_plot(df,column)
+        return map_tab(fig)
+    elif tab=='temp-scatter':
+        temp_plot_fig=temp_plot(df)
+        return temp_tab(temp_plot_fig)
+
+@app.callback(
+    Output(component_id='map', component_property='figure'),
+    [Input(component_id='select', component_property='value')] #call back for Map
+)
+def update_figure(option):
+    return map_plot(df, option)
 
 @app.callback(
     Output(component_id='temp_line', component_property='figure'),
-    [Input(component_id='figure-dropdown', component_property='value')]
+    [Input(component_id='figure-dropdown', component_property='value')] #call back for temp
 )
 def update_figure(selected_value):
     figures = temp_plot(df)
