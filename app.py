@@ -32,12 +32,11 @@ def seperate_location(df):
     return grouped
 
 def map_plot(df,option):
-    #map plot to show locations
     fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
-                            color='Temperture', size='Temperture',
+                            color=f'{option}', size=f'{option}',
                             color_continuous_scale='Viridis',
                             size_max=15, zoom=6,
-                            title='Mean Temperture in 6 locations')
+                            title=f'Mean {option} in 6 locations')
     fig.update_layout(mapbox_style='open-street-map')
     return fig
 
@@ -51,7 +50,7 @@ def map_tab():
                     html.H4('Select'),
                     dcc.Dropdown(
                         id='select',
-                        options=['Temperture'],
+                        options=['Temperture','Salinity'],
                         value='Temperture'
                     )]),
                 dbc.Col(width=9, children=[
@@ -116,7 +115,7 @@ def content(tab):
     elif tab=='temp-scatter':
         temp_plot_fig=temp_plot(df)
         return temp_tab(temp_plot_fig)
-
+#Call back for temp
 @app.callback(
     Output(component_id='temp_line', component_property='figure'),
     [Input(component_id='figure-dropdown', component_property='value')]
@@ -124,6 +123,12 @@ def content(tab):
 def update_figure(selected_value):
     figures = temp_plot(df)
     return figures[selected_value]
-
+# Callback for map
+@app.callback(
+    Output(component_id='map', component_property='figure'),
+    [Input(component_id='select', component_property='value')]
+)
+def update_figure(option):
+    return map_plot(df, option)
 if __name__=='__main__':
     app.run_server(debug=True)
