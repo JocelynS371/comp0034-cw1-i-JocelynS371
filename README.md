@@ -79,16 +79,38 @@ This is a much more difficult question to answer than the other 2 question we ar
 
 ## Overall Design of the dashboard
 ### Designing the visuals
-One priciple to keep in mind of while designing the dashboard is the Gestalt Principles. It is the idea that humn group silimilar element and recognize patterns when we precievive objects.
+One priciple to keep in mind of while designing the dashboard is the Gestalt Principles. It is the idea that human group silimilar element and recognize patterns when we precievive objects.
 As an interface between users and the data, it is important that we help user navagate as effortlessly as possible.
 On the whole, we could apply the law of common region on the dash board design. Which means we should group similar elements in a common, closed region. For example, we could present data sniplet eg. means and standard deivations on the side and the graphs on the other side. This allows the user to understand that they are different element on their first glance.   
+Likewise, the law of proximity means that human see object close to each other as 1 entity. 
 The law of Multi-Stability means that we could highlight the important information with contrast in colour. We want to present the information as the 'foreground', which often means the lightest colour in the page.    
-## **Evaluate** the final dashboard and visualisations with respect to the design and intended audience and purpose.
-*When answering this essay question word, the key is to provide your opinion or verdict concerning the extent to which an argument or set of research findings is accurate. You may also be required to demonstrate the extent to which you agree with a particular argument or hypothesis.*
+Applying these priciple, we want to divide the dashboard into different parts. My plan is to have 3 part to it. An options block, chart(s) and sniplet of the data. I want each of them to be viewed as a seperate entity. Therefore the options need to be together and colour can be used to seperate the chart and data sniplet.   
+### Chart Design
+>Above all else, show the data    
+
+>“A graphical method is successful only if the decoding is effective. No matter how clever and how technologically impressive the encoding, it fails if the decoding process fails.”   
+   
+Keep in mind of these principle. We should keep the graphs as simple as possible.   
+In addition, according to Cleveland and McGill (1984), the human mind find positions on a scale the easiest to interpret while colour and shading is the most difficult to interpertate.
+This suggest that scatter graph are the most effective in presenting data. Following that, length, direction and angle is also easy to understand. These points to graphs such as bar chart or line chart.
+Surprisingly, coloured graphs such as heat map or bubble graph are not recommended size they could mask the insight with their visual design.
+## Evaluate the final dashboard and visualisations
+In designing the dashboard, I decided to focus on a minimal number of data visualixation, which is 2 charts. THe charts are place on different tabs to keep the pages uncluttered. 
+   
+In the end instead of seperate charts, I combined chart 1,2,3,4 designed above into 1 chart in the tab trend exploration. THis allows the user to experiment and explore the data on the same tab.
+Since my data vary with both time and space. I think a map plot would be a good way to visualise the position of locations where the data are taken. This graph mainly present the location rather than magintute of data. THerefore I find it acceptable that it may not show much insight in regard to temperture or salinity in each location.   
+However, to assist I added a statistic panel on the left to aid readers in seeing the data. It was planned for the panel to varies when the user click on each point. However it did not work and a key type error keep occuring and hence was not implement. THe issue lays most likely in the clickedData values returned by the graph. For now the users are allowed to choose a location from a dropdown list
+   
+THe other graph is a scatter plot. THe plot allows user to select variables on both x and y axis and location. It also allows users to choose a trendline for the dashboard to plot. 
+Since my target sudiences are scientist, it is expected that they are sufficiently skilled in statistic to know common trend line options. This should meet their requirement as it visualise trends between variables and perform very simple statistical analysis as defined in the requirements at a earlier stage.
+
+As for the overall design, with the law of multistability in mind, I decided to use a white backgroud and highlight important information using a darker background. THe more important the section is, the darker the background and lighter the text.
 
 # Dash app
 
-Add any notes here (optional).
+THere is 2 thing that I wanted to acheive but was not able to.   
+1st, I want to keep the responds time in each chart under 1 minute but it was not possible.
+2nd, I wanted to update the stat panel as users click on the graph but was not able to. After reading documentations, I decided that it was not achvieable in this time frame and used a dropdown list to allow users to chose location instead.
 
 # Testing
 
