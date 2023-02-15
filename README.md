@@ -119,3 +119,4 @@ https://github.com/ucl-comp0035/comp0034-cw1-i-JocelynS371.git
 The above is the url to my gitbub repository
 
 I also used continous intergration in gothub to lint my code. Evidence can be seen in actions in github.
+![image] (pylint.png)
