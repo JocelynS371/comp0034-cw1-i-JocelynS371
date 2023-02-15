@@ -20,7 +20,7 @@ def read_df():
     'Serial_date_number_base_date_1_January_0000':'Date',
     'Bottom_Depth_m':'Bottom Depth'
     },inplace=True)
-    df['Date'] = [datetime.fromordinal(int(date)) for date in df['Date']] 
+    df['Date'] = [datetime.fromordinal(int(date)) for date in df['Date']]
     return df
 
 
@@ -36,7 +36,7 @@ def seperate_location(df):
 def map_plot(df,option):
     """create a scatter plot on a map"""
 
-    fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
+    fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude',
                             color=f'{option}', size=f'{option}',
                             template='seaborn',
                             color_continuous_scale='Viridis',
@@ -139,27 +139,27 @@ def time_tab(time_plot_fig):
                 html.H5('Select Variable to show on y axis:'),
                 dcc.RadioItems(
                         id='radio-option-y',
-                        options=[{'label': f'{option}', 'value': f'{option}'} 
+                        options=[{'label': f'{option}', 'value': f'{option}'}
                         for option in df.columns],
                         value='Temperture',),
                 html.H5('Select Variable to show on x axis:'),
                 dcc.RadioItems(
                         id='radio-option-x',
-                        options=[{'label': f'{option}', 'value': f'{option}'} 
+                        options=[{'label': f'{option}', 'value': f'{option}'}
                         for option in df.columns],
                         value='Date')]),
                 dbc.Col(width=6, children=[
                     html.H5('Select location'),
                     dcc.Dropdown(
                         id='dropdown-location',
-                        options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
+                        options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'}
                         for i in range(len(time_plot_fig))],
                         value='fig_1')]),
                 dbc.Col(width=6,children=[
                     html.H5(children='Select trendline option'),
                     dcc.Dropdown(
                                 id='dropdown-trend',
-                                options=[{'label': f'{option}', 'value': f'{option}'} 
+                                options=[{'label': f'{option}', 'value': f'{option}'}
                                             for option in trend_option],
                                 value='none')]
                     ),
@@ -169,8 +169,7 @@ def time_tab(time_plot_fig):
                     dcc.Graph(
                     id='time_scatter',
                     figure=time_plot_fig['fig_1'])
-                ])
-                    
+                ]) 
                 ])
     return tab
 
@@ -245,13 +244,10 @@ def update_figure(option):
 
 @app.callback(
     Output("stats-card", "children"), 
-    #[Input("map", "clickData"),
     [Input(component_id='select', component_property='value'),
     Input(component_id='select-locat', component_property='value')]
     )
 def render_stats_panel(option,locat):
-    #locat_list = [(k, v) for k, v in locat.items()]
-    #loca=round(locat_list,1)
     return stat_card(grouped,option,eval(locat))
 
 
