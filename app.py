@@ -1,4 +1,4 @@
-from dash import Dash,html,dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output
 from datetime import datetime
 import plotly.express as px
 import dash_bootstrap_components as dbc
@@ -7,66 +7,63 @@ import pandas as pd
 
 
 def read_df():
-
     """return a renamed dataframe"""
-
-    #need to change column names
-    # data_path= Path(__file__).parent.joinpath('data', 'data_set_prepared.csv')
-    data_path='data_set_prepared.csv'
-    # cols = ['Temperture', 'Salinity', 'density', 'Pressure', 'Date', 'Longitude', 'Latitude', 'Bottom Depth']
+    data_path = 'data_set_prepared.csv'
     df = pd.read_csv(data_path)
     df.rename(columns={
-    'Potential_temperature_C':'Temperture',
-    'Practical_salinity':'Salinity',
-    'Potential_density_anomaly_kgm3':'Density',
-    'Pressure_decibar':'Pressure',
-    'Serial_date_number_base_date_1_January_0000':'Date',
-    'Bottom_Depth_m':'Bottom Depth'
-    },inplace=True)
-    df['Date'] = [datetime.fromordinal(int(date)) for date in df['Date']] 
+        'Potential_temperature_C': 'Temperature',
+        'Practical_salinity': 'Salinity',
+        'Potential_density_anomaly_kgm3': 'Density',
+        'Pressure_decibar': 'Pressure',
+        'Serial_date_number_base_date_1_January_0000': 'Date',
+        'Bottom_Depth_m': 'Bottom Depth'
+    }, inplace=True)
+    df['Date'] = [datetime.fromordinal(int(date)) for date in df['Date']]
     return df
 
-def seperate_location(df):
+
+def separate_location(df):
     df['Latitude'] = round(df['Latitude'], 1)
     df['Longitude'] = round(df['Longitude'], 1)
     grouped = df.groupby(['Longitude', 'Latitude'])
     return grouped
 
-def map_plot(df,option):
-    fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
+
+def map_plot(df, option):
+    fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude',
                             color=f'{option}', size=f'{option}',
                             template='seaborn',
                             color_continuous_scale='Viridis',
                             size_max=15, zoom=6,
                             title=f'Mean {option} in 6 locations',
-                            hover_data=['Latitude','Longitude'])
+                            hover_data=['Latitude', 'Longitude'])
     fig.update_layout(mapbox_style='open-street-map')
     return fig
 
-def stat_card(grouped, option,locat):
-    """
-    grouped: grouped data
-    option: the variable to show
-    locat: turple of coordinate
-    """
-    mean=round(grouped.mean()[option][locat],2)
-    std=round(grouped.std()[option][locat],2)
+
+def stat_card(grouped, option, locat):
+    """Create a card containing statistics for a location"""
+    mean = round(grouped.mean()[option][locat], 2)
+    std = round(grouped.std()[option][locat], 2)
     box = dbc.Card(className="bg-dark text-light", children=[
         dbc.CardBody([
-            html.H4(location_2[f'{locat}'], id="card-name", className="card-title"),
+            html.H4(f'Location {locat}', id="card-name", className="card-title"),
             html.Br(),
-            html.H6(f"Mean of:{option} at {location_2[f'{locat}']}", className="card-title"),
+            html.H6(f"Mean of {option} at location {locat}", className="card-title"),
             html.H4(mean, className="card-text text-light"),
             html.Br(),
-            html.H6(f"Standard Deviation of:{option} at {location_2[f'{locat}']}", className="card-title"),
+            html.H6(f"Standard Deviation of {option} at location {locat}", className="card-title"),
             html.H4(std, className="card-text text-light"),
             html.Br()
         ])
     ])
     return box
 
-def map_tab():
-    tab=dbc.Container(
+
+def map_tab(df, location_2):
+    """Create a map tab for the dashboard"""
+    grouped = separate_location(df)
+    tab = dbc.Container(
         children=[
             html.Div(),
             dbc.Row([
@@ -74,9 +71,9 @@ def map_tab():
                     html.H2('Select'),
                     dcc.Dropdown(
                         id='select',
-                        options=[{'label':f'{option}','value':f'{option}'}
-                        for option in df.columns],
-                        value='Temperture'
+                        options=[{'label': f'{option}', 'value': f'{option}'}
+                                 for option in df.columns],
+                        value='Temperature'
                     ),
                     dcc.Dropdown(
                         id='select-locat',
@@ -84,16 +81,24 @@ def map_tab():
                         value=(-36.7, 63.6)
                     ),
                     html.Br(),
-                    html.Div(id='stats-card',children=stat_card(grouped,'Temperture',(-36.6, 63.6)))
-                    ]),
+                    html.Div(id='stats-card', children=stat_card(grouped, 'Temperature', (-36.6, 63.6)))
+                ]),
                 dbc.Col(width=9, children=[
                     html.H2(children='Map Location'),
                     dcc.Graph(
-                    id='map',
-                    figure=map_plot(df,'Temperture'))])])])
+                        id='map',
+                        figure=map_plot(df, 'Temperature')
+                    )
+                ])
+            ])
+        ]
+    )
     return tab
 
-def time_plot(df, optionx,optiony,trend):
+
+def time_plot(df, optionx, optiony, trend):
+    """Create a time plot graph"""
+
     figures = {}
     grouped = df.groupby(['Longitude', 'Latitude'])
     for i, (name, group) in enumerate(grouped):
@@ -114,6 +119,7 @@ def time_plot(df, optionx,optiony,trend):
         fig.update_layout(title=title)
         figures[f"fig_{i + 1}"] = fig
     return figures
+
 
 def time_tab(time_plot_fig):
     tab = dbc.Container(
@@ -173,7 +179,7 @@ def time_tab(time_plot_fig):
         ])
     )
     return tab
-
+"""create a tab for time series graph"""
 
 df=read_df()
 grouped=seperate_location(df)
