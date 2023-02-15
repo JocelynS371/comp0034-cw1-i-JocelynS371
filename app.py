@@ -169,22 +169,8 @@ def time_tab(time_plot_fig):
                     dcc.Graph(
                     id='time_scatter',
                     figure=time_plot_fig['fig_1'])
-                ]) 
                 ])
-    return tab
-
-    tab = dbc.Container(
-        html.Div(),
-        html.H1(children='Placeholder', className="display-1"),
-        dbc.Row([
-            dbc.Col(width=6, children=[
-                html.H4('Column 1')
-            ]),
-            dbc.Col(width=6, children=[
-                html.H4('Column 2')
-            ])
-        ])
-    )
+                ])
     return tab
 
 
@@ -243,7 +229,7 @@ def update_figure(option):
 
 
 @app.callback(
-    Output("stats-card", "children"), 
+    Output("stats-card", "children"),
     [Input(component_id='select', component_property='value'),
     Input(component_id='select-locat', component_property='value')]
     )
