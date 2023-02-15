@@ -35,6 +35,7 @@ def seperate_location(df):
 def map_plot(df,option):
     fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', 
                             color=f'{option}', size=f'{option}',
+                            template='seaborn',
                             color_continuous_scale='Viridis',
                             size_max=15, zoom=6,
                             title=f'Mean {option} in 6 locations',
@@ -68,10 +69,9 @@ def map_tab():
     tab=dbc.Container(
         children=[
             html.Div(),
-            html.H1(children='Locations', className="display-1"),
             dbc.Row([
                 dbc.Col(width=3, children=[
-                    html.H4('Select'),
+                    html.H2('Select'),
                     dcc.Dropdown(
                         id='select',
                         options=[{'label':f'{option}','value':f'{option}'}
@@ -102,15 +102,15 @@ def time_plot(df, optionx,optiony,trend):
                 group,
                 x=optionx,
                 y=optiony,
-                template='simple_white')
+                template='seaborn')
         elif trend in trend_option:
             fig = px.scatter(
                 group,
                 x=optionx,
                 y=optiony,
-                template='simple_white',
+                template='seaborn',
                 trendline=trend)
-        title = f"{optionx} varying with {optiony} where Longitude= {name[0]} Latitude= {name[1]}"
+        title = f"{optiony} varying with {optionx} where Longitude= {name[0]} Latitude= {name[1]}"
         fig.update_layout(title=title)
         figures[f"fig_{i + 1}"] = fig
     return figures
@@ -119,27 +119,29 @@ def time_tab(time_plot_fig):
     tab = dbc.Container(
         children=[
             html.Div(),
-            html.H2(children='Time Series Data', className="display-1"),
+            html.H3(children='Scatter graph to show relations'),
             dbc.Row([
-                html.H4('Select Variable to show on y axis:',style={'textAlign': 'center'}),
+                html.Div(children=[
+                html.H5('Select Variable to show on y axis:'),
                 dcc.RadioItems(
                         id='radio-option-y',
                         options=[{'label': f'{option}', 'value': f'{option}'} 
                         for option in df.columns],
                         value='Temperture',),
-                html.H4('Select Variable to show on x axis:',style={'textAlign': 'center'}),
+                html.H5('Select Variable to show on x axis:'),
                 dcc.RadioItems(
                         id='radio-option-x',
                         options=[{'label': f'{option}', 'value': f'{option}'} 
                         for option in df.columns],
-                        value='Date'),
-                dbc.Col(width=3, children=[
+                        value='Date')]),
+                dbc.Col(width=6, children=[
                     html.H5('Select location'),
                     dcc.Dropdown(
                         id='dropdown-location',
                         options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
                         for i in range(len(time_plot_fig))],
-                        value='fig_1'),
+                        value='fig_1')]),
+                dbc.Col(width=6,children=[
                     html.H5(children='Select trendline option'),
                     dcc.Dropdown(
                                 id='dropdown-trend',
@@ -149,7 +151,7 @@ def time_tab(time_plot_fig):
                     ),
                     ]),
 
-                dbc.Col(width=9, children=[
+                dbc.Col(width=12, children=[
                     dcc.Graph(
                     id='time_scatter',
                     figure=time_plot_fig['fig_1'])
@@ -185,11 +187,11 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 app.layout = html.Div([
-    html.H1('Dashboard'),
+    html.H1('Data Dashboard for Angmagssalik Array in the Denmark Strait Overflow - 1998 to 2015'),
     dcc.Tabs(id="tabs-graph", value='location-map',
      children=[
         dcc.Tab(label='Map Plot', value='location-map'),
-        dcc.Tab(label='Time Trend', value='time-scatter')
+        dcc.Tab(label='Scatter Graphs', value='time-scatter')
     ]),
     html.Div(id='tabs-content')
 ])
