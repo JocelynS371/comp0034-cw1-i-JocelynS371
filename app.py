@@ -1,9 +1,9 @@
-from dash import Dash,html,dcc, Input, Output
 from datetime import datetime
 import plotly.express as px
 import dash_bootstrap_components as dbc
-from pathlib import Path
 import pandas as pd
+from dash import Dash,html,dcc, Input, Output
+
 
 
 def read_df():
@@ -129,7 +129,7 @@ def time_plot(df, optionx,optiony,trend):
 
 def time_tab(time_plot_fig):
     """create a tab for the scatter graph"""
-    
+
     tab = dbc.Container(
         children=[
             html.Div(),
@@ -215,7 +215,7 @@ app.layout = html.Div([
 def content(tab):
     if tab=='location-map':
         return map_tab()
-    elif tab=='time-scatter':
+    if tab=='time-scatter':
         time_plot_fig=time_plot(df,'Date','Temperture','none')
         return time_tab(time_plot_fig)
 
@@ -252,8 +252,7 @@ def update_figure(option):
 def render_stats_panel(option,locat):
     #locat_list = [(k, v) for k, v in locat.items()]
     #loca=round(locat_list,1)
-    card=stat_card(grouped,option,eval(locat))
-    return card
+    return stat_card(grouped,option,eval(locat))
 
 
 if __name__=='__main__':
