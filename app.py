@@ -37,9 +37,32 @@ def map_plot(df,option):
                             color=f'{option}', size=f'{option}',
                             color_continuous_scale='Viridis',
                             size_max=15, zoom=6,
-                            title=f'Mean {option} in 6 locations')
+                            title=f'Mean {option} in 6 locations',
+                            hover_data=['Latitude','Longitude'])
     fig.update_layout(mapbox_style='open-street-map')
     return fig
+
+def stat_card(grouped, option):
+    """
+    grouped: grouped data
+    option: the variable to show
+    locat: turple of coordinate
+    """
+    mean=round(grouped.mean()[option][(-36.7, 63.6)],2)
+    std=round(grouped.std()[option][(-36.7, 63.6)],2)
+    box = dbc.Card(className="bg-dark text-light", children=[
+        dbc.CardBody([
+            html.H4(location['(-36.7, 63.6)'], id="card-name", className="card-title"),
+            html.Br(),
+            html.H6(f"Mean of:{option} at {location['(-36.7, 63.6)']}", className="card-title"),
+            html.H4(mean, className="card-text text-light"),
+            html.Br(),
+            html.H6(f"Standard Deviation of:{option} at {location['(-36.7, 63.6)']}", className="card-title"),
+            html.H4(std, className="card-text text-light"),
+            html.Br()
+        ])
+    ])
+    return box
 
 def map_tab():
     tab=dbc.Container(
@@ -54,7 +77,10 @@ def map_tab():
                         options=[{'label':f'{option}','value':f'{option}'}
                         for option in df.columns],
                         value='Temperture'
-                    )]),
+                    ),
+                    html.Br(),
+                    html.Div(id='stats-card',children=stat_card(grouped,'Temperture'))
+                    ]),
                 dbc.Col(width=9, children=[
                     html.H2(children='Map Location'),
                     dcc.Graph(
@@ -62,24 +88,24 @@ def map_tab():
                     figure=map_plot(df,'Temperture'))])])])
     return tab
 
-def time_plot(df, option,trend):
+def time_plot(df, optionx,optiony,trend):
     figures = {}
     grouped = df.groupby(['Longitude', 'Latitude'])
     for i, (name, group) in enumerate(grouped):
-        if trend in trend_option:
+        if trend == 'none':
             fig = px.scatter(
                 group,
-                x='Date',
-                y=option,
+                x=optionx,
+                y=optiony,
+                template='simple_white')
+        elif trend in trend_option:
+            fig = px.scatter(
+                group,
+                x=optionx,
+                y=optiony,
                 template='simple_white',
                 trendline=trend)
-        else:
-            fig = px.scatter(
-                group,
-                x='Date',
-                y=option,
-                template='simple_white')
-        title = f"{option} varying with time where Longitude= {name[0]} Latitude= {name[1]}"
+        title = f"{optionx} varying with {optiony} where Longitude= {name[0]} Latitude= {name[1]}"
         fig.update_layout(title=title)
         figures[f"fig_{i + 1}"] = fig
     return figures
@@ -89,15 +115,19 @@ def time_tab(time_plot_fig):
         children=[
             html.Div(),
             html.H2(children='Time Series Data', className="display-1"),
-            html.H4('Select Variable to show',style={'textAlign': 'center'}),
-                    dcc.RadioItems(
-                        id='radio-option',
+            dbc.Row([
+                html.H4('Select Variable to show on y axis:',style={'textAlign': 'center'}),
+                dcc.RadioItems(
+                        id='radio-option-y',
                         options=[{'label': f'{option}', 'value': f'{option}'} 
                         for option in df.columns],
-                        value='Temperture',
-                        style={'textAlign': 'center'}
-                    ),
-            dbc.Row([
+                        value='Temperture',),
+                html.H4('Select Variable to show on x axis:',style={'textAlign': 'center'}),
+                dcc.RadioItems(
+                        id='radio-option-x',
+                        options=[{'label': f'{option}', 'value': f'{option}'} 
+                        for option in df.columns],
+                        value='Date'),
                 dbc.Col(width=3, children=[
                     html.H5('Select location'),
                     dcc.Dropdown(
@@ -105,13 +135,13 @@ def time_tab(time_plot_fig):
                         options=[{'label': f'Location {i+1}', 'value': f'fig_{i+1}'} 
                         for i in range(len(time_plot_fig))],
                         value='fig_1'),
-                    html.H5(children='type type of trendline you want here'),
-                    html.H6(children=f'options are{trend_option}'),
+                    html.H5(children='Select trendline option'),
                     dcc.Dropdown(
                                 id='dropdown-trend',
                                 options=[{'label': f'{option}', 'value': f'{option}'} 
                                             for option in trend_option],
-                                value='lowess')
+                                value='none')]
+                    ),
                     ]),
 
                 dbc.Col(width=9, children=[
@@ -121,11 +151,8 @@ def time_tab(time_plot_fig):
                 ])
                     
                 ])
-            ])
-
     return tab
 
-def comparison_tab():
     tab = dbc.Container(
         html.Div(),
         html.H1(children='Placeholder', className="display-1"),
@@ -143,9 +170,11 @@ def comparison_tab():
 
 df=read_df()
 grouped=seperate_location(df)
-trend_option=['ols', 'lowess', 'expanding']
-
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+location={}
+for i, (name, group) in enumerate(grouped):
+    location[f'{name}']=f'location {i+1}'
+trend_option=['none','ols', 'lowess', 'expanding']
+app = Dash(external_stylesheets=[dbc.themes.DARKLY])
 
 
 app.layout = html.Div([
@@ -153,7 +182,7 @@ app.layout = html.Div([
     dcc.Tabs(id="tabs-graph", value='location-map',
      children=[
         dcc.Tab(label='Map Plot', value='location-map'),
-        dcc.Tab(label='Time Trend', value='time-scatter'),
+        dcc.Tab(label='Time Trend', value='time-scatter')
     ]),
     html.Div(id='tabs-content')
 ])
@@ -164,10 +193,8 @@ def content(tab):
     if tab=='location-map':
         return map_tab()
     elif tab=='time-scatter':
-        time_plot_fig=time_plot(df,'Temperture','none')
+        time_plot_fig=time_plot(df,'Date','Temperture','none')
         return time_tab(time_plot_fig)
-    elif tab=='data_comparision':
-        return comparison_tab()
 
 
 
@@ -175,11 +202,12 @@ def content(tab):
 @app.callback(
     Output(component_id='time_scatter', component_property='figure'),
     Input(component_id='dropdown-location', component_property='value'),
-    Input(component_id='radio-option', component_property='value'),
+    Input(component_id='radio-option-x', component_property='value'),
+    Input(component_id='radio-option-y', component_property='value'),
     Input(component_id='dropdown-trend', component_property='value')
 )
-def update_figure(location_value, radio_option,trend):
-    figures = time_plot(df, radio_option,trend)
+def update_figure(location_value, radio_option_x,radio_option_y,trend):
+    figures = time_plot(df, radio_option_x,radio_option_y,trend)
     return figures[location_value]
 
 
@@ -191,6 +219,18 @@ def update_figure(location_value, radio_option,trend):
 def update_figure(option):
     return map_plot(df, option)
 
+
+@app.callback(
+    Output("stats-card", "children"), 
+    #[Input("map", "clickData"),
+    #Input(component_id='select', component_property='value')]
+    Input(component_id='select', component_property='value')
+    )
+def render_stats_panel(option):
+    #locat_list = [(k, v) for k, v in locat.items()]
+    #loca=round(locat_list,1)
+    card=stat_card(grouped,option)
+    return card
 
 
 if __name__=='__main__':
