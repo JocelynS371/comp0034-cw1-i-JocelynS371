@@ -42,22 +42,22 @@ def map_plot(df,option):
     fig.update_layout(mapbox_style='open-street-map')
     return fig
 
-def stat_card(grouped, option):
+def stat_card(grouped, option,locat):
     """
     grouped: grouped data
     option: the variable to show
     locat: turple of coordinate
     """
-    mean=round(grouped.mean()[option][(-36.7, 63.6)],2)
-    std=round(grouped.std()[option][(-36.7, 63.6)],2)
+    mean=round(grouped.mean()[option][locat],2)
+    std=round(grouped.std()[option][locat],2)
     box = dbc.Card(className="bg-dark text-light", children=[
         dbc.CardBody([
-            html.H4(location['(-36.7, 63.6)'], id="card-name", className="card-title"),
+            html.H4(location_2[f'{locat}'], id="card-name", className="card-title"),
             html.Br(),
-            html.H6(f"Mean of:{option} at {location['(-36.7, 63.6)']}", className="card-title"),
+            html.H6(f"Mean of:{option} at {location_2[f'{locat}']}", className="card-title"),
             html.H4(mean, className="card-text text-light"),
             html.Br(),
-            html.H6(f"Standard Deviation of:{option} at {location['(-36.7, 63.6)']}", className="card-title"),
+            html.H6(f"Standard Deviation of:{option} at {location_2[f'{locat}']}", className="card-title"),
             html.H4(std, className="card-text text-light"),
             html.Br()
         ])
@@ -78,8 +78,13 @@ def map_tab():
                         for option in df.columns],
                         value='Temperture'
                     ),
+                    dcc.Dropdown(
+                        id='select-locat',
+                        options=location_2,
+                        value=(-36.7, 63.6)
+                    ),
                     html.Br(),
-                    html.Div(id='stats-card',children=stat_card(grouped,'Temperture'))
+                    html.Div(id='stats-card',children=stat_card(grouped,'Temperture',(-36.6, 63.6)))
                     ]),
                 dbc.Col(width=9, children=[
                     html.H2(children='Map Location'),
@@ -171,8 +176,10 @@ def time_tab(time_plot_fig):
 df=read_df()
 grouped=seperate_location(df)
 location={}
+location_2={}
 for i, (name, group) in enumerate(grouped):
-    location[f'{name}']=f'location {i+1}'
+    location_2[f'{name}']=f'location {i+1}'
+    location[f'location {i+1}']=name
 trend_option=['none','ols', 'lowess', 'expanding']
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -223,13 +230,13 @@ def update_figure(option):
 @app.callback(
     Output("stats-card", "children"), 
     #[Input("map", "clickData"),
-    #Input(component_id='select', component_property='value')]
-    Input(component_id='select', component_property='value')
+    [Input(component_id='select', component_property='value'),
+    Input(component_id='select-locat', component_property='value')]
     )
-def render_stats_panel(option):
+def render_stats_panel(option,locat):
     #locat_list = [(k, v) for k, v in locat.items()]
     #loca=round(locat_list,1)
-    card=stat_card(grouped,option)
+    card=stat_card(grouped,option,eval(locat))
     return card
 
 
