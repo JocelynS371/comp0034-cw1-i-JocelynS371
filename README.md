@@ -14,9 +14,10 @@ To set up your project:
 
 # Set-up instructions
 
-Add any instructions here for the markers on how to setup and run your Dash app.
+https://github.com/ucl-comp0035/comp0034-cw1-i-JocelynS371.git
 
-Add the URL to your GitHub repo here e.g. https://github.com/ucl-comp0035name_of_your_repo
+THat is the url to my repository.
+To use the app, install the modules in requirement.txt and run app.py
 
 # Visualisation design
 ## Target Audience and questions to answer
@@ -36,8 +37,7 @@ The questions to be answered is:
 2. Did the ocean current change direction? If yes, how?
 3. Is the annual salinity consistent in the past 15 year? Does the pattern of change coincide with the temperture change
 4. Can we predict how the current is going to change in the next 5 years and present it to users?
-## **Explain** the design for the dashboard and each visualisation. The designs should be appropriate for the target audience and the question(s) the visualisation is designed to address. Give reasons for your choices. Use appropriate literature/references to support your decisions.
-## Designing chart to include
+## Explain the design for the dashboard and each visualisation
 In the section above, we can see that need 1 and 5 are directly satified with a web app data dashboard. However, need 3 and 6 are not possible or likely to be fulfill at this stage. In terms of requirement, the needs can be catergorised as 
 1. access a chosen range of data -- **Must Have**
 2. be provided documentation -- **Should Have**
@@ -122,3 +122,15 @@ I also used continous intergration in gothub to lint my code. Evidence can be se
 ![linting](/pylint.png)
 
 Some error are ignored becuase I did not find an alternative way to acheive the desired result.
+# Reference List
+Cairo, A. (n.d.). Graphics Lies, Misleading Visuals. [online] Available at: https://faculty.ucmerced.edu/jvevea/classes/Spark/readings/Cairo2015_Chapter_GraphicsLiesMisleadingVisuals.pdf.   
+
+Cleveland, W.S. and McGill, R. (1984). Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods. Journal of the American Statistical Association, 79(387), pp.531–554. doi:https://doi.org/10.1080/01621459.1984.10478080.   
+
+Gutierrez, A. (2021). How to design data visualizations that are actually valuable. [online] Medium. Available at: https://uxdesign.cc/how-to-design-data-visualizations-that-are-actually-valuable-e8b752835b9a [Accessed 15 Feb. 2023].   
+
+IBM (n.d.). IBM Design Language. [online] www.ibm.com. Available at: https://www.ibm.com/design/language/.   
+
+Interaction Design Foundation (2016). What are Gestalt Principles? [online] The Interaction Design Foundation. Available at: https://www.interaction-design.org/literature/topics/gestalt-principles.   
+
+Spring 2019, M. 2629 (2019). A Reader on Data Visualization. [online] mschermann.github.io. Santa Clara University. Available at: https://mschermann.github.io/data_viz_reader/.   
