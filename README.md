@@ -106,20 +106,16 @@ Since my target sudiences are scientist, it is expected that they are sufficient
 
 As for the overall design, with the law of multistability in mind, I decided to use a white backgroud and highlight important information using a darker background. THe more important the section is, the darker the background and lighter the text.
 
->“A graphical method is successful only if the decoding is effective. No matter how clever and how technologically impressive the encoding, it fails if the decoding process fails.”   
-   
-Keep in mind of these principle. We should keep the graphs as simple as possible.   
-In addition, according to Cleveland and McGill (1984), the human mind find positions on a scale the easiest to interpret while colour and shading is the most difficult to interpertate.
-This suggest that scatter graph are the most effective in presenting data. Following that, length, direction and angle is also easy to understand. These points to graphs such as bar chart or line chart.
-Surprisingly, coloured graphs such as heat map or bubble graph are not recommended size they could mask the insight with their visual design.
-## Evaluate the final dashboard and visualisations
-In designing the dashboard, I decided to focus on a minimal number of data
 # Dash app
 
 THere is 2 thing that I wanted to acheive but was not able to.   
 1st, I want to keep the responds time in each chart under 1 minute but it was not possible.
 2nd, I wanted to update the stat panel as users click on the graph but was not able to. After reading documentations, I decided that it was not achvieable in this time frame and used a dropdown list to allow users to chose location instead.
 
-# Testing
+# Tools & Techniques
 
-Add evidence here (groups).
+https://github.com/ucl-comp0035/comp0034-cw1-i-JocelynS371.git
+
+The above is the url to my gitbub repository
+
+I also used continous intergration in gothub to lint my code. Evidence can be seen in actions in github.

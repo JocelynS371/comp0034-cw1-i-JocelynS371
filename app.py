@@ -174,7 +174,7 @@ location={}
 for i, (name, group) in enumerate(grouped):
     location[f'{name}']=f'location {i+1}'
 trend_option=['none','ols', 'lowess', 'expanding']
-app = Dash(external_stylesheets=[dbc.themes.DARKLY])
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 app.layout = html.Div([
