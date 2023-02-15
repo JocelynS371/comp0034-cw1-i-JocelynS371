@@ -118,5 +118,7 @@ https://github.com/ucl-comp0035/comp0034-cw1-i-JocelynS371.git
 
 The above is the url to my gitbub repository
 
-I also used continous intergration in gothub to lint my code. Evidence can be seen in actions in github.
-![image] (./pylint.png)
+I also used continous intergration in gothub to lint my code. Evidence can be seen in actions in github.  
+![linting](/pylint.png)
+
+Some error are ignored becuase I did not find an alternative way to acheive the desired result.
